@@ -1,23 +1,48 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToWishlist } from './redux/slices/wishlistSlice'
+import { addToCart } from './redux/slices/cartSlice'
 
 function View() {
 
-  const [product , setProduct] = useState({})
+  const userCart = useSelector(state => state.cartReducer)
+  const dispatch = useDispatch()
+  const userWishlist = useSelector(state => state.whishlistReducer)
 
+
+  const [product, setProduct] = useState({})
   const { id } = useParams()
   console.log(id);
 
   useEffect(() => {
     if (sessionStorage.getItem("allproducts")) {
-      const  allproducts  = JSON.parse(sessionStorage.getItem("allproducts"))
-     console.log(allproducts.find(item => item.id == id));
-     setProduct(allproducts.find(item => item.id == id))
-     
+      const allproducts = JSON.parse(sessionStorage.getItem("allproducts"))
+      console.log(allproducts.find(item => item.id == id));
+      setProduct(allproducts.find(item => item.id == id))
+
     }
   }, [])
 
+  const handleWishlist = () => {
+    const existingProduct = userWishlist?.find(item => item?.id == id)
+    if (existingProduct) {
+      alert("Product already in your wishlist")
+    } else {
+      dispatch(addToWishlist(product))
+    }
+  }
+
+  const handleCart = () => {
+    dispatch(addToCart(product))
+    const existingProduct = userCart?.find(item => item.id ==id)
+    if(existingProduct){
+      alert("Product Qunatity is Incrementing")
+    }else{
+      alert("Product added to Cart")
+    }
+  }
 
 
   return (
@@ -38,23 +63,23 @@ function View() {
             </p>
             <h3 className='font-bold'>Client Reviews :</h3>
             {
-              product?.reviews?.length>0 ?
-              product?.reviews?.map(item => (
-                <div key={item?.date} className='shadow-border p-1 mb-2 '>
-                <h5>
-                  <span className='font-bold'>{item?.reviewerName}</span> : <span>{item?.comment}</span>
-                </h5>
-                <p>Rating : {item?.rating} <i class="fa-solid fa-star text-yellow-600"></i></p>
-                </div>
-              ))
-              :
-              <div>
-                Item not found yet!!
+              product?.reviews?.length > 0 ?
+                product?.reviews?.map(item => (
+                  <div key={item?.date} className='shadow-border p-1 mb-2 '>
+                    <h5>
+                      <span className='font-bold'>{item?.reviewerName}</span> : <span>{item?.comment}</span>
+                    </h5>
+                    <p>Rating : {item?.rating} <i class="fa-solid fa-star text-yellow-600"></i></p>
+                  </div>
+                ))
+                :
+                <div>
+                  Item not found yet!!
                 </div>
             }
             <div className='flex justify-between mt-5'>
-              <button className='bg-blue-600 text-white p-2'>Add to wishlist</button>
-              <button className='bg-green-600 text-white p-2'>Add to Cart</button>
+              <button onClick={handleWishlist} className='bg-blue-600 text-white p-2'>Add to wishlist</button>
+              <button onClick={handleCart} className='bg-green-600 text-white p-2'>Add to Cart</button>
             </div>
           </div>
 
