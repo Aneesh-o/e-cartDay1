@@ -23,6 +23,17 @@ function Home() {
         dispath(fetchProducts())
     }, [])
 
+    const navigateToNext = () => {
+        if(currentPage!=totalPages){
+            setCurrentPage(currentPage+1)
+        }
+    }
+
+    const navigateToBack = () => {
+        if(currentPage!=1){
+            setCurrentPage(currentPage-1)
+        }
+    }
 
 
 
@@ -40,8 +51,8 @@ function Home() {
                         <>
                             <div className='grid grid-cols-4 gap-4'>
                                 {
-                                    allproducts?.length > 0 ?
-                                        allproducts?.map(product => (
+                                    visibleAllproducts?.length > 0 ?
+                                    visibleAllproducts?.map(product => (
                                             <div key={product?.id} className='rounded border p-2 shadow'>
                                                 <img width={'100%'} height={'100px'} src={product.thumbnail} alt="loading" />
                                                 <div className='text-center'>
@@ -59,6 +70,11 @@ function Home() {
 
                                 }
 
+                            </div>
+                            <div className='text-2xl text-center font-bold mt-20'>
+                                <span onClick={navigateToBack} className='cursor-pointer'><i className='fa-solid fa-backward me-3'></i></span>
+                                <span>{currentPage} of {totalPages}</span>
+                                <span onClick={navigateToNext} className='cursor-pointer'><i className='fa-solid fa-forward ms-5'></i></span>
                             </div>
                         </>
                 }
